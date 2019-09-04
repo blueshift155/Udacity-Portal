@@ -57,7 +57,8 @@ class MenuItem(Base):
         }
 
 
-engine = create_engine('sqlite:///restaurantmenuwithusers.db')
+#engine = create_engine('sqlite:///restaurantmenuwithusers.db')
+engine = create_engine('postgresql://catalog:password@localhost/catalog', connect_args={'check_same_thread': False})
 
 
 Base.metadata.create_all(engine)
