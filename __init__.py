@@ -176,6 +176,17 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' in login_session:
+            return f(*args, **kwargs)
+        else:
+            flash("You are not allowed to access there")
+            return redirect('/login')
+    return decorated_function
+
+
 
 # JSON APIs to view Restaurant Information
 @app.route('/restaurant/<int:restaurant_id>/menu/JSON')
@@ -371,18 +382,6 @@ def gdisconnect():
                 400))
         response.headers['Content-Type'] = 'application/json'
         return response
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'username' in login_session:
-            return f(*args, **kwargs)
-        else:
-            flash("You are not allowed to access there")
-            return redirect('/login')
-    return decorated_function
-
 
 # Disconnect based on provider
 @app.route('/disconnect')
