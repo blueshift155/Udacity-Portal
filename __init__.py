@@ -17,8 +17,16 @@ import requests
 
 app = Flask(__name__)
 
+# Obtain credentials from JSON file
 CLIENT_ID = json.loads(
     open('/var/www/catalog/client_secrets.json', 'r').read())['web']['client_id']
+
+CLIENT_SECRET = json.loads(open('/var/www/catalog/client_secrets.json', 'r')
+                          .read())['web']['client_secret']
+redirect_uris = json.loads(open('/var/www/catalog/client_secrets.json', 'r')
+                          .read())['web']['redirect_uris']
+app.secret_key = CLIENT_SECRET
+
 APPLICATION_NAME = "Restaurant Menu Application"
 
 # Connect to Database and create database session
@@ -51,7 +59,7 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object
-        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets('/var/www/catalog/client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
@@ -161,7 +169,6 @@ def login_required(f):
             flash("You are not allowed to access there")
             return redirect('/login')
     return decorated_function
-
 
 
 # JSON APIs to view Restaurant Information
@@ -383,6 +390,6 @@ def disconnect():
 
 
 if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
+    #app.secret_key = 'super_secret_key'
     app.debug = False
     app.run()
